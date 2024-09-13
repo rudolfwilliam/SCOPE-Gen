@@ -1,0 +1,9 @@
+{
+    "n_iterations" : 100,
+    "min_prob_threshold" : 0.0,
+    "epsilon" : 4.0,
+    "data_set_sizes" : [300, 400, 800, 1000],
+    "alpha_grid" : [0.1, 0.15, 0.2],
+    "k_max" : 20,
+    "n_coverage" : 500
+}

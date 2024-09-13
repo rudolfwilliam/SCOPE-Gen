@@ -1,0 +1,6 @@
+{"name" : "ourmethod{}", "score" : "count", "stages" : ["generation", "quality", "remove_dupl"]}
+{"name" : "ourmethod{}", "score" : "sum", "stages" : ["generation", "quality", "remove_dupl"]}
+{"name" : "ourmethod{}", "score" : "max", "stages" : ["generation", "quality", "remove_dupl"]}
+{"name" : "ourmethod{} gen. only", "score" : "count", "stages" : ["generation", "remove_dupl"]}
+{"name" : "ourmethod{} gen. only", "score" : "sum", "stages" : ["generation", "remove_dupl"]}
+{"name" : "ourmethod{} gen. only", "score" : "max", "stages" : ["generation", "remove_dupl"]}

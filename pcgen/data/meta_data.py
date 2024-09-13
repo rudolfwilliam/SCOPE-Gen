@@ -1,0 +1,1 @@
+STAGES = ["generation", "quality", "distance"]

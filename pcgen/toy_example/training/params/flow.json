@@ -1,0 +1,12 @@
+{
+    "max_epochs" : 100,
+    "batch_size_train" : 32,
+    "batch_size_val" : 32,
+    "train_val_split" : 0.8,
+    "num_workers" : 4,
+    "patience" : 5,
+    "verbose" : true,
+	"project_root" : "toy_example",
+	"ckpt_dir" : "toy_example/models/checkpoints",
+	"log_dir" : "toy_example/training/logs"
+}

@@ -1,0 +1,1 @@
+from pcgen.models.base import GenerativeModel
