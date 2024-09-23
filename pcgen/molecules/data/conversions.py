@@ -1,7 +1,7 @@
 """Convert from rdkit molecule to (X, E) data tuple and vice versa."""
 
-from pcgen.molecular_extensions.data.meta_data import TYPES, BONDS, ATOM_DECODER
-from pcgen.molecular_extensions.data.base import squeeze
+from pcgen.molecules.data.meta_data import TYPES, BONDS, ATOM_DECODER
+from pcgen.molecules.data.base import squeeze
 from torch.functional import F
 from rdkit import Chem
 from rdkit.Chem import SanitizeMol, SanitizeFlags
@@ -42,6 +42,9 @@ def is_valid_mol(mol):
         return False
 
 def mol_to_tuple(mol):
+    # if mol is a list with only one element, take the element
+    if isinstance(mol, list) and len(mol) == 1:
+        mol = mol[0]
     N = mol.GetNumAtoms()
 
     type_idx = []

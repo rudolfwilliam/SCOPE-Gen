@@ -1,8 +1,8 @@
 """Script that evaluates all baselines at once."""
 
-from pcgen.triviaqa.scripts.eval_clm import eval as eval_clm
-from pcgen.triviaqa.scripts.eval import eval as eval_scacgen
-from pcgen.triviaqa.paths import CONFIG_DIR
+from pcgen.molecules.scripts.eval_clm import eval as eval_clm
+from pcgen.molecules.scripts.eval import eval as eval_scacgen
+from pcgen.molecules.paths import CONFIG_DIR
 from pcgen.utils import load_config_from_json, load_configs_from_jsonl, set_seed
 import psutil
 

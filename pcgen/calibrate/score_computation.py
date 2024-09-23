@@ -73,7 +73,7 @@ def get_first_idx(instance, admissible=True, adjust_for_dupl=False):
             return len(instance["labels"])
     else:
         if adjust_for_dupl:
-            # TODO: there seems to be a bug in the original code here 
+            # there seems to be a bug in the original code here 
             # - if two answers are the same, they should have the same label
             # - this is a conservative workaround
             new_instance = remove_dupl(instance)

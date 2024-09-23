@@ -11,8 +11,7 @@ def load_model_from_ckpt_path(path, map_location="cpu"):
     import sys
     import torch
     import warnings
-    from pathlib import Path
-    from pcgen.molecular_extensions.models.molecule_generator import DiGressMoleculeGenerator
+    from pcgen.molecules.models.molecule_generator import DiGressMoleculeGenerator
     # this is necessary because of serialization issues (super annoying, please let me know if there is a better way)
     sys.path.insert(0, find_src_path())
     with warnings.catch_warnings():

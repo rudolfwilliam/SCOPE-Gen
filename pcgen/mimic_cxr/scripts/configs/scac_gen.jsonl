@@ -1,0 +1,9 @@
+{"name" : "ourmethod{}", "score" : "count", "stages" : ["generation", "quality", "distance"]}
+{"name" : "ourmethod{}", "score" : "sum", "stages" : ["generation", "quality", "distance"]}
+{"name" : "ourmethod{}", "score" : "max", "stages" : ["generation", "quality", "distance"]}
+{"name" : "ourmethod{} gen. only", "score" : "count", "stages" : ["generation"]}
+{"name" : "ourmethod{} gen. only", "score" : "sum", "stages" : ["generation"]}
+{"name" : "ourmethod{} gen. only", "score" : "max", "stages" : ["generation"]}
+{"name" : "ourmethod{} flipped", "score" : "count", "stages" : ["generation", "distance", "quality"]}
+{"name" : "ourmethod{} flipped", "score" : "sum", "stages" : ["generation", "distance", "quality"]}
+{"name" : "ourmethod{} flipped", "score" : "max", "stages" : ["generation", "distance", "quality"]}

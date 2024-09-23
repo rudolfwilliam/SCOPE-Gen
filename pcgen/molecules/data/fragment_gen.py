@@ -1,12 +1,12 @@
 """Script that contains functions to generate scaffolds from molecular data."""
 
-from pcgen.molecular_extensions.data.conversions import tuple_to_mol, smiles_to_mol
+from pcgen.molecules.data.conversions import tuple_to_mol, smiles_to_mol
 
 import torch
 
 def remove_atom(mol):
     from random import choice
-    from pcgen.molecular_extensions.data.conversions import mol_to_tuple, clean_and_convert_samples
+    from pcgen.molecules.data.conversions import mol_to_tuple, clean_and_convert_samples
     from rdkit import RDLogger
     # Suppress RDKit warnings
     RDLogger.DisableLog('rdApp.*')

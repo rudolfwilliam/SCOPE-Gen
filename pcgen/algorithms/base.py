@@ -29,8 +29,8 @@ ORDER_FUNC_DIST = distance_order_func
 # actually not required, but for the sake of consistency
 MULTIPROCESSING = False
 
-# split up admissibility levels into 4 parts
-M = 4
+# split up admissibility levels into M parts
+M = 5
 
 def create_scorgen_pipeline(data, split_ratios, alphas, score, data_splitting=True, verbose=False, stages=None, count_adm=True, measure_time=False):
     # Split the dataset into calibration for generation, calibration for quality pruning, and data for distance pruning
@@ -51,7 +51,7 @@ def create_scorgen_pipeline(data, split_ratios, alphas, score, data_splitting=Tr
     for i, stage in enumerate(stages):
         if not stage == "remove_dupl":
             conformal_p, first_adm = _calibrate_pipeline(pipeline, stage, stages, score_func, 
-                                                          adjust_for_dupl, count_adm, data_split_idxs, alphas)
+                                                         adjust_for_dupl, count_adm, data_split_idxs, alphas)
             if count_adm:
                 first_adms.append(first_adm)
             conformal_ps.append(conformal_p)

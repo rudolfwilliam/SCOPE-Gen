@@ -1,10 +1,11 @@
 from pcgen.data.datasets import CountDataset, ConditionalDataset
-from pcgen.molecular_extensions.data.fragment_gen import remove_atom
-from pcgen.molecular_extensions.data.conversions import is_valid_mol
-from pcgen.molecular_extensions.paths import DATA_DIR
-from pcgen.molecular_extensions.data.conversions import smiles_to_mol, smiles_to_tuple
+from pcgen.molecules.data.fragment_gen import remove_atom
+from pcgen.molecules.data.conversions import is_valid_mol
+from pcgen.molecules.paths import DATA_DIR
+from pcgen.molecules.data.conversions import smiles_to_mol, smiles_to_tuple
 from pcgen.utils import override
 from torch.utils.data import Dataset
+import os
 import pickle
 
 
@@ -22,7 +23,7 @@ def switch_representation(smiles, repr):
 class MosesDataset(Dataset):
     def __init__(self, z=None, repr="smiles"):
         if z is None:
-            with open(DATA_DIR + '/moses_test/moses_data.pkl', 'rb') as file:
+            with open(os.path.join(DATA_DIR, 'moses_test/moses_data.pkl'), 'rb') as file:
                 z = pickle.load(file)
         else:
             assert all(isinstance(s, str) and is_valid_mol(s) for s in z)

@@ -5,12 +5,16 @@ import pickle
 import numpy as np
 from pcgen.scripts import DATA_DIRS
 
+EXCLUDED_METHODS = ['ourmethod{} gen. only', 'ourmethod{} flipped']
+
 def main(score, data_set_size, alpha):
     aggr_results = {}
     for dataset_name, data_dir in DATA_DIRS.items():
         results = {}
         for dir in os.listdir(data_dir):
             method_name = dir
+            if method_name in EXCLUDED_METHODS:
+                continue
             dir_path = os.path.join(data_dir, dir)
             method_results = None
             for file in os.listdir(dir_path):
@@ -35,29 +39,39 @@ def main(score, data_set_size, alpha):
 
 def compute_mean_and_std(results):
     mean_adm_counts = sum(results['adm_counts']) / len(results['adm_counts'])
-    no_rejects = (sum(np.isinf(results['sizes'])) + sum(np.isnan(results['sizes']))) / len(results['sizes'])
-    sizes = [x for x in results['sizes'] if (not np.isinf(x) and not np.isnan(x))]
-    mean_size = sum(sizes) / len(sizes)
-    mean_time = sum(results['times']) / len(results['times'])
-    
     std_adm_counts = (sum((x - mean_adm_counts) ** 2 for x in results['adm_counts']) / len(results['adm_counts'])) ** 0.5
-    std_size = (sum((x - mean_size) ** 2 for x in sizes) / len(sizes)) ** 0.5
-    std_time = (sum((x - mean_time) ** 2 for x in results['times']) / len(results['times'])) ** 0.5
+    try:
+        no_rejects = (sum(np.isinf(results['sizes'])) + sum(np.isnan(results['sizes']))) / len(results['sizes'])
+        sizes = [x for x in results['sizes'] if (not np.isinf(x) and not np.isnan(x))]
+        mean_size = sum(sizes) / len(sizes)
+        mean_time = sum(results['times']) / len(results['times'])
+        
+        std_size = (sum((x - mean_size) ** 2 for x in sizes) / len(sizes)) ** 0.5
+        std_time = (sum((x - mean_time) ** 2 for x in results['times']) / len(results['times'])) ** 0.5
+    except ZeroDivisionError:
+        return {
+            '\\# Queries': f"$ {mean_adm_counts:.3f} \pm {std_adm_counts:.3f}$",
+            'Time': "$ - $",
+            'Set Size': "$ - $",
+            'Frac. Reject': "$ 1.000 \pm 0.000$"
+        }
 
     return {
-        '\\# Queries': f"{mean_adm_counts:.3f} \pm {std_adm_counts:.3f}",
-        'Time': f"{mean_time:.3f} \pm {std_time:.3f}",
-        'Set Size': f"{mean_size:.3f} \pm {std_size:.3f}",
-        '\\# Reject': f"{no_rejects:.3f} \pm 0.000"
+        '\\# Queries': f"$ {mean_adm_counts:.3f} \pm {std_adm_counts:.3f}$",
+        'Time': f"$ {mean_time:.3f} \pm {std_time:.3f}$",
+        'Set Size': f"$ {mean_size:.3f} \pm {std_size:.3f}$",
+        'Frac. Reject': f"$ {no_rejects:.3f} \pm 0.000$"
     }
 
 def find_minimums(aggr_results):
-    min_values = {dataset: {metric: float('inf') for metric in ['\\# Queries', 'Time', 'Set Size', '\\# Reject']} for dataset in DATA_DIRS.keys()}
+    min_values = {dataset: {metric: float('inf') for metric in ['\\# Queries', 'Time', 'Set Size', 'Frac. Reject']} for dataset in DATA_DIRS.keys()}
     for method_results in aggr_results.values():
         for dataset, dataset_results in method_results.items():
             for metric, value in dataset_results.items():
                 if metric in min_values[dataset]:
-                    mean_value = float(value.split(' ')[0])
+                    if value == "$ - $":
+                        continue
+                    mean_value = float(value.split(' ')[1])
                     if mean_value < min_values[dataset][metric]:
                         min_values[dataset][metric] = mean_value
     return min_values
@@ -78,7 +92,7 @@ def generate_latex_table(aggr_results, min_values):
 
     # Assuming aggr_results is a dictionary like:
     # {'CLM': {'TriviaQA': {'Queries': '2.873 ± 0.349', 'Time': '0.006 ± 0.001', 'Set Size': '1.383 ± 0.284'}, ...}, ...}
-    metrics = ['\\# Queries', 'Time', 'Set Size', '\\# Reject']
+    metrics = ['\\# Queries', 'Time', 'Set Size', 'Frac. Reject']
     for method, datasets in aggr_results.items():
         content += f"\\multirow{{4}}{{*}}{{{method}}}\n"
         for idx, metric in enumerate(metrics):
@@ -87,9 +101,12 @@ def generate_latex_table(aggr_results, min_values):
             for dataset in ['TriviaQA', 'MIMIC-CXR', 'CNN/DM', 'Molecules']:
                 result = datasets.get(dataset, {}).get(metric, '')
                 if result != '':
-                    mean_value = float(result.split(' ')[0])
+                    if result == "$ - $":
+                        content += "& $ - $ "
+                        continue
+                    mean_value = float(result.split(' ')[1])
                     if mean_value == min_values[dataset][metric]:
-                        result = f"\\bf{{{float(result.split(' ')[0]):.3f}}} \pm " + result.split(' ')[2]
+                        result = f"$ \\bf{{{float(result.split(' ')[1]):.3f}}} \pm " + result.split(' ')[3]
                 content += f"& {result} "
             content += "\\\\\n"
         content += "\\midrule\n" if method != list(aggr_results.keys())[-1] else "\\bottomrule\n"
@@ -103,5 +120,5 @@ def generate_latex_table(aggr_results, min_values):
     return header + content + footer
 
 if __name__ == '__main__':
-    main(score='max', data_set_size=600, alpha=0.3)
+    main(score='sum', data_set_size=600, alpha=0.3)
     

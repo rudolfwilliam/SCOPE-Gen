@@ -33,7 +33,7 @@ class CountScore(NonConformityScore):
 
 
 class SumScore(object):
-    def __init__(self, gamma=0.3):
+    def __init__(self, gamma=0.5):
         self.gamma = gamma
         super(SumScore, self).__init__()
     

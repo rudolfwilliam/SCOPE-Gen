@@ -1,4 +1,4 @@
-from pcgen.data import format_data
+from pcgen.data.format_data import format_data
 from pcgen.triviaqa.paths import DATA_DIR
 
 def main(data_dir=DATA_DIR, output_dir="processed/data.pkl"):

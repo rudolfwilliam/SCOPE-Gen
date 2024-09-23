@@ -1,0 +1,6 @@
+{"name" : "CLM", "score" : "count", "reduced_max" : 40}
+{"name" : "CLM", "score" : "sum", "reduced_max" : 40}
+{"name" : "CLM", "score" : "max", "reduced_max" : 40}
+{"name" : "CLM reduced texttt{max}", "score" : "count", "reduced_max" : 10}
+{"name" : "CLM reduced texttt{max}", "score" : "sum", "reduced_max" : 10}
+{"name" : "CLM reduced texttt{max}", "score" : "max", "reduced_max" : 10}

@@ -8,7 +8,8 @@ import psutil
 
 VERBOSE = True
 CLM_ONLY = False
-SCACGEN_ONLY = False
+SCACGEN_ONLY = True
+
 
 def main(cfg, cfgs_scacgen, cfgs_clm, dir_):
     if VERBOSE:
@@ -28,6 +29,7 @@ def main(cfg, cfgs_scacgen, cfgs_clm, dir_):
                 print(f"Finished evaluation for CLM configuration {cfg_clm}.")
     else:
         print("Skipping CLM evaluation.")
+
 
 if __name__ == "__main__":
     set_seed(0)

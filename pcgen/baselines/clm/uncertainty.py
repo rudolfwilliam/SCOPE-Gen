@@ -163,19 +163,24 @@ def run_experiment(data, data_dir, data_set_size, n_iterations, n_coverage, alph
             results = pool.map(run_single_iteration, args)
             coverages, sizes, adm_counts, times = zip(*results)
             
-            mean_cov = np.nanmean(np.nan_to_num(coverages, nan=1))
+            mean_cov = np.mean(np.nan_to_num(coverages, nan=1.))
             
             if mean_cov < min_cov:
                 min_cov = mean_cov
                 best_config = (delta_1[j], delta_2[j])
                 best_coverages, best_sizes, best_adm_counts, best_times = coverages, sizes, adm_counts, times
+            # run again with best config
+            #args = [(data, np.random.permutation(len(data)), data_set_size, n_coverage, best_config[0], best_config[1], use_lambda_1, 
+            #         use_lambda_2, alt_lambda_1, alt_lambda_2, reduced_max, score) for _ in range(n_iterations)]
+            #results = pool.map(run_single_iteration, args)
+            #best_coverages, best_sizes, best_adm_counts, best_times = zip(*results)
     
     if not debug:
         store_results(data_dir, name, alpha, score, best_coverages, best_sizes, best_adm_counts, best_times, data_set_size)
     
     if verbose:
         print(f"Best configuration - delta_1: {best_config[0]:.2f}, delta_2: {best_config[1]:.2f}.")
-        print(f"Mean coverage: {np.mean(best_coverages):.2f}")
+        print(f"Mean coverage: {np.mean(np.nan_to_num(best_coverages, nan=1.)):.2f}")
 
 
 NAME_TO_SCALER = {

@@ -1,14 +1,15 @@
 """Script that evaluates all baselines at once."""
 
-from pcgen.triviaqa.scripts.eval_clm import eval as eval_clm
-from pcgen.triviaqa.scripts.eval import eval as eval_scacgen
-from pcgen.triviaqa.paths import CONFIG_DIR
+from pcgen.mimic_cxr.scripts.eval_clm import eval as eval_clm
+from pcgen.mimic_cxr.scripts.eval import eval as eval_scacgen
+from pcgen.mimic_cxr.paths import CONFIG_DIR
 from pcgen.utils import load_config_from_json, load_configs_from_jsonl, set_seed
 import psutil
 
 VERBOSE = True
 CLM_ONLY = False
-SCACGEN_ONLY = True
+SCACGEN_ONLY = False
+
 
 def main(cfg, cfgs_scacgen, cfgs_clm, dir_):
     if VERBOSE:
@@ -28,6 +29,7 @@ def main(cfg, cfgs_scacgen, cfgs_clm, dir_):
                 print(f"Finished evaluation for CLM configuration {cfg_clm}.")
     else:
         print("Skipping CLM evaluation.")
+
 
 if __name__ == "__main__":
     set_seed(0)
