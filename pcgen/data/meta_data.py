@@ -1,1 +1,1 @@
-STAGES = ["generation", "quality", "distance"]
+STAGES = ["generation", "diversity", "quality"]

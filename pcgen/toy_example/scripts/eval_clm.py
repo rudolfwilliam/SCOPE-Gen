@@ -72,7 +72,7 @@ if __name__ == '__main__':
     cfg = load_config_from_json(CONFIG_DIR + "/eval.json")
     global DEBUG, VERBOSE, FIRST_ADM_ONLY, OPTIM
     # prevents the script from saving results to disk
-    DEBUG = True
+    DEBUG = False
     VERBOSE = True
     # this variable must be set to True for biased CLM
     FIRST_ADM_ONLY = False

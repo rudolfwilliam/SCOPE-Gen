@@ -2,7 +2,7 @@
 
 import numpy as np
 from pcgen.utils import slice_dict
-from pcgen.data.remove_dupl import remove_dupl
+from pcgen.scripts.remove_dupl import remove_dupl
 
 
 class ScoreComputer(object):

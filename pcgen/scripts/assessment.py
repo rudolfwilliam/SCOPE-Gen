@@ -5,7 +5,8 @@ import pickle
 import numpy as np
 from pcgen.scripts import DATA_DIRS
 
-EXCLUDED_METHODS = ['ourmethod{} gen. only', 'ourmethod{} flipped']
+#EXCLUDED_METHODS = ['ourmethod{} gen. only', 'ourmethod{} flipped']
+EXCLUDED_METHODS = []
 
 def main(score, data_set_size, alpha):
     aggr_results = {}
@@ -120,5 +121,5 @@ def generate_latex_table(aggr_results, min_values):
     return header + content + footer
 
 if __name__ == '__main__':
-    main(score='sum', data_set_size=600, alpha=0.3)
+    main(score='max', data_set_size=600, alpha=0.3)
     

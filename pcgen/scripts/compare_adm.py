@@ -4,12 +4,12 @@ import os
 import numpy as np
 import pickle
 import matplotlib.pyplot as plt
-import tikzplotlib
+#import tikzplotlib
 from pcgen.scripts import DATA_DIRS
 
 SIZES = [300, 600, 1200]
 SCORES = ['max', 'sum', 'count']
-DATASET_NAME = "TriviaQA"  # Specify your dataset name
+DATASET_NAME = "MIMIC-CXR"  # Specify your dataset name
 
 def main(alpha):
     data_dir = DATA_DIRS[DATASET_NAME]
@@ -72,13 +72,11 @@ def main(alpha):
             ax.axvline(mean_clm, color="orange", linestyle='dashed', linewidth=2, label='CLM Mean')
             
             # Set labels and titles
+            ax.set_ylabel('Frequency')
+            if size_idx == num_sizes // 2:
+                ax.set_title(f'Non-conformity measure: {score}', fontsize=12)
             if score_idx == num_scores - 1:
-                ax.set_xlabel('Mean Coverage')
-            if size_idx == 0:
-                ax.set_ylabel(f'{score}\nFrequency')
-            # Removed sample size as column title
-            # if score_idx == 0:
-            #     ax.set_title(f'Sample Size: {size}', fontsize=12)
+                ax.set_xlabel('Mean Admissibility')
             # Adjust legend to only display unique entries
             if score_idx == 0 and size_idx == num_sizes - 1:
                 handles, labels = ax.get_legend_handles_labels()
@@ -88,10 +86,10 @@ def main(alpha):
     plt.tight_layout()
     plt.show()
     # Uncomment the following lines if you need to save the figure with TikZ
-    # from pcgen.utils import tikzplotlib_fix_ncols
-    # tikzplotlib_fix_ncols(fig)
-    # tikzplotlib.save("coverage_comparison.tex")
-
+    #from pcgen.utils import tikzplotlib_fix_ncols
+    #tikzplotlib_fix_ncols(fig)
+    #tikzplotlib.save("coverage_comparison.tex")
+    
 
 if __name__ == '__main__':
     main(alpha=0.3)

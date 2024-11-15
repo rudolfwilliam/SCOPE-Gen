@@ -33,7 +33,7 @@ MULTIPROCESSING = False
 M = 5
 
 def create_scorgen_pipeline(data, split_ratios, alphas, score, data_splitting=True, verbose=False, stages=None, count_adm=True, measure_time=False):
-    # Split the dataset into calibration for generation, calibration for quality pruning, and data for distance pruning
+    # Split the dataset into calibration for generation, calibration for quality pruning, and data for diversity pruning
     if stages is None:
         from pcgen.data.meta_data import STAGES
         stages = STAGES
@@ -83,7 +83,7 @@ def _update_pipeline(pipeline, stage, score_func, conformal_p):
     else:
         if stage == "quality":
             pipeline = FilterPredictionPipeline(pipeline, conformal_p, SCORE_FUNC_QUALITY, ORDER_FUNC_QUALITY)
-        elif stage == "distance":
+        elif stage == "diversity":
             pipeline = FilterPredictionPipeline(pipeline, conformal_p, SCORE_FUNC_DIST, ORDER_FUNC_DIST)
         elif stage == "remove_dupl":
             pipeline = RemoveDuplicatesPredictionPipeline(pipeline)
@@ -96,7 +96,7 @@ def _initialize_score_computer(stage, pipeline, score_func, adjust_for_dupl):
     elif stage == "quality":
         score_computer = ScoreComputer(pipeline, score_func=SCORE_FUNC_QUALITY, 
                                         order_func=ORDER_FUNC_QUALITY, adjust_for_dupl=adjust_for_dupl)
-    elif stage == "distance":
+    elif stage == "diversity":
         score_computer = ScoreComputer(pipeline, score_func=SCORE_FUNC_DIST, 
                                         order_func=ORDER_FUNC_DIST, adjust_for_dupl=adjust_for_dupl)
     else:
@@ -155,12 +155,7 @@ def experiment_iteration(args):
 def run_experiment(data, data_dir, data_set_size, n_iterations, n_coverage, split_ratios, alpha, score, stages, name, verbose=False, debug=False):
     K = len(split_ratios)
 
-    if K > 1:
-        # alphas schedule
-        alphas = [1 - (1 - alpha)**(1/M)]*M
-        alphas = [1 - reduce(operator.mul, [(1 - alphas[i]) for i in range(M-1)])] + [1 - (1 - alphas[-1])**(1/(K-1))]*(K-1)
-    else:
-        alphas = [alpha]
+    alphas = compute_alphas(alpha, K, M)
 
     args = [(data, data_set_size, n_coverage, split_ratios, alphas, score, stages, verbose, i) for i in range(n_iterations)]
     
@@ -188,3 +183,12 @@ def run_experiment(data, data_dir, data_set_size, n_iterations, n_coverage, spli
 
     if verbose:
         print(f"Mean coverage: {np.mean(aggregate_results['coverages']):.2f}")
+
+def compute_alphas(alpha, K, M):
+    if K > 1:
+        # alphas schedule
+        alphas = [1 - (1 - alpha)**(1/M)]*M
+        alphas = [1 - reduce(operator.mul, [(1 - alphas[i]) for i in range(M-1)])] + [1 - (1 - alphas[-1])**(1/(K-1))]*(K-1)
+    else:
+        alphas = [alpha]
+    return alphas

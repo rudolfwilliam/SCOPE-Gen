@@ -26,7 +26,15 @@ class PredictionPipeline(object):
         if self.prediction_pipeline is not None:
             return self.prediction_pipeline.data
         return self._data            
-
+    
+    def generate_new(self, data):
+        """Predict new data."""
+        self.data = data
+        predictions = []
+        for i in range(len(data)):
+            prediction = self.generate(i)
+            predictions.append(prediction)
+        return predictions
 
 class MinimalPredictionPipeline(PredictionPipeline):
     """Simply returns the data."""
@@ -55,7 +63,8 @@ class GenerationPredictionPipeline(PredictionPipeline):
         if not any(acc_scores >= self.conformal_p):
             return None
         if not any(acc_scores <= self.conformal_p):
-            return {'labels' : np.array([]), 'scores' : np.array([]), 'similarities' : np.array([])} # return empty set
+            return {key : np.array([]) for key, value in instance.items()}
+            #return {'labels' : np.array([]), 'scores' : np.array([]), 'similarities' : np.array([])} # return empty set
         else:
             first_idx = np.where(acc_scores <= self.conformal_p)[0][-1]
         # return instance up to first_idx
@@ -85,7 +94,8 @@ class FilterPredictionPipeline(PredictionPipeline):
         if not any(acc_scores >= self.conformal_p):
             return instance
         if not any(acc_scores <= self.conformal_p):
-            return {'labels' : np.array([]), 'scores' : np.array([]), 'similarities' : np.array([])} # return empty set
+            #return {'labels' : np.array([]), 'scores' : np.array([]), 'similarities' : np.array([])} # return empty set
+            return {key : np.array([]) for key, value in instance.items()}
         else:
             first_idx = np.where(acc_scores <= self.conformal_p)[0][-1]
         instance_sliced = slice_dict(instance_ordered, first_idx)
@@ -120,10 +130,12 @@ class RemoveDuplicatesPredictionPipeline(PredictionPipeline):
                         seen.add(j)
         
         # Create new instance with filtered data
-        new_instance = {
-            "labels": labels[unique_indices],
-            "scores": instance["scores"][unique_indices],
-            "similarities": similarities[np.ix_(unique_indices, unique_indices)]
-        }
+        #new_instance = {
+        #    "labels": labels[unique_indices],
+        #    "scores": instance["scores"][unique_indices],
+        #    "similarities": similarities[np.ix_(unique_indices, unique_indices)]
+        #}
+        new_instance = {key: value[unique_indices] if len(value.shape) == 1 else \
+                        value[np.ix_(unique_indices, unique_indices)] for key, value in instance.items()}
         return new_instance
     

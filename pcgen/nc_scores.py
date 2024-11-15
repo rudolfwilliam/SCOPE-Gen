@@ -65,6 +65,16 @@ class MinScore(object):
         else:
             return -min(instance["scores"])
 
+class NegSumScore(object):
+    def __init__(self):
+        super(NegSumScore, self).__init__()
+    
+    def __call__(self, instance, apply_seq=False):
+        if apply_seq:
+            return np.array([-sum(instance["scores"][:(i + 1)]) for i in range(0, len(instance["scores"]))])
+        else:
+            return -sum(instance["scores"])
+
 class DistanceScore(object):
     def __init__(self):
         super(DistanceScore, self).__init__()

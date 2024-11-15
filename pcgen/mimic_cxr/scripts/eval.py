@@ -49,12 +49,19 @@ def eval(cfg, name, score, stages, dir_="processed"):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description="Run the evaluation module with given parameters")
-    parser.add_argument('--config', type=str, default=os.path.join("CONFIG_DIR", "eval.json"), help='Path to configuration JSON file')
-    parser.add_argument('--name', type=str, default="scac-gen", help='name of the method')
+    parser.add_argument('--config', type=str, default=os.path.join(CONFIG_DIR, "eval.json"), help='Path to configuration JSON file')
+    parser.add_argument('--name', type=str, default="ourmethod{}", help='Name of the method')
     parser.add_argument('--dir', type=str, default="processed", help='Directory for processing')
     parser.add_argument('--score', type=str, default="count", help='Score type')
-    parser.add_argument('--stages', nargs='+', default=["generation", "quality", "diversity"], help='List of stages to process')
+    parser.add_argument('--stages', nargs='+', default=["generation", "diversity", "quality"], help='List of stages to process')
+    args = parser.parse_args()
 
     set_seed(0)
-    cfg = load_config_from_json(os.path.join(CONFIG_DIR, "eval.json"))    
-    eval(cfg, dir_="processed", name="scac-gen", score="count", stages=["generation", "quality", "distance"])
+    cfg = load_config_from_json(args.config)  # Use args.config instead of hardcoded path
+    eval(
+        cfg,
+        dir_=args.dir,
+        name=args.name,
+        score=args.score,
+        stages=args.stages
+    )

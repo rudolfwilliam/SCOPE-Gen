@@ -1,34 +1,53 @@
 """Functions for visualization of molecular data."""
 
-def generate_non_substructure_vis(mol, sub, height=500, width=500):
-    """Higlight non-substructure atoms and bonds in a molecule as a svg."""
+def highlight_removed_atom(original_mol, sub_mol, width=500, height=500):
+    """Highlight the atom removed from original_mol to create sub_mol, including its bonds."""
     from rdkit.Chem.Draw import rdMolDraw2D
-    
-    # Get substructure match
-    hit_ats = set(mol.GetSubstructMatch(sub))
-    all_ats = set(range(mol.GetNumAtoms()))
-    non_hit_ats = list(all_ats - hit_ats)
-    
-    # Get bonds not in substructure match
-    non_hit_bonds = []
-    for bond in mol.GetBonds():
-        aid1 = bond.GetBeginAtomIdx()
-        aid2 = bond.GetEndAtomIdx()
-        if aid1 in non_hit_ats or aid2 in non_hit_ats:
-            non_hit_bonds.append(bond.GetIdx())
-    
-    # Create MolDraw2DSVG object
-    d = rdMolDraw2D.MolDraw2DSVG(height, width)
-    
-    # Draw molecule with highlighted non-substructure
-    rdMolDraw2D.PrepareAndDrawMolecule(d, mol, highlightAtoms=non_hit_ats, highlightBonds=non_hit_bonds)
-    
-    # Finish drawing
+
+    # Get the substructure match (mapping from sub_mol atoms to original_mol atoms)
+    match = original_mol.GetSubstructMatch(sub_mol)
+    if not match:
+        # The sub_mol is not a substructure of original_mol
+        raise ValueError("sub_mol is not a substructure of original_mol")
+
+    matched_atom_indices = set(match)
+    all_atom_indices = set(range(original_mol.GetNumAtoms()))
+
+    # Identify the removed atom(s)
+    removed_atoms = list(all_atom_indices - matched_atom_indices)
+    if len(removed_atoms) != 1:
+        # Expecting exactly one removed atom
+        raise ValueError(f"Expected one removed atom, found {len(removed_atoms)}")
+
+    removed_atom_idx = removed_atoms[0]
+
+    # Identify bonds connected to the removed atom
+    removed_bonds = []
+    for bond in original_mol.GetBonds():
+        if (bond.GetBeginAtomIdx() == removed_atom_idx or
+            bond.GetEndAtomIdx() == removed_atom_idx):
+            removed_bonds.append(bond.GetIdx())
+
+    # Set up drawing options
+    d = rdMolDraw2D.MolDraw2DSVG(width, height)
+    opts = d.drawOptions()
+    # Optional: Customize atom and bond highlights
+    highlight_atom_colors = {removed_atom_idx: (0.0, 1.0, 1.0)}  # Red color
+    highlight_bond_colors = {idx: (0.0, 1.0, 1.0) for idx in removed_bonds}
+
+    # Draw the molecule with highlighted atom and bonds
+    rdMolDraw2D.PrepareAndDrawMolecule(
+        d,
+        original_mol,
+        highlightAtoms=[removed_atom_idx],
+        highlightBonds=removed_bonds,
+        highlightAtomColors=highlight_atom_colors,
+        highlightBondColors=highlight_bond_colors,
+    )
+
+    # Finish drawing and return SVG
     d.FinishDrawing()
-    
-    # Get SVG string
     svg = d.GetDrawingText()
-    
     return svg
 
 def extract_svg_content(svg_string):

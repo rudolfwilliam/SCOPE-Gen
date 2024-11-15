@@ -10,7 +10,6 @@ VERBOSE = True
 CLM_ONLY = False
 SCACGEN_ONLY = False
 
-
 def main(cfg, cfgs_scacgen, cfgs_clm, dir_):
     if VERBOSE:
         print(f"Running evaluation for {len(cfgs_scacgen)} SCAC-Gen configurations and {len(cfgs_clm)} CLM configurations.")

@@ -28,6 +28,8 @@ def labels_to_losses(data_dir):
     output_dir = os.path.join(data_dir, "outputs", "losses.npy")
     np.save(output_dir, losses)
 
+def invert(scores):
+    return 1/(1 + 1e10*scores)
 
 if __name__ == '__main__':
     format_data(data_dir = "outputs", output_dir = "processed/data.pkl")

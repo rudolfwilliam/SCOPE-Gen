@@ -4,7 +4,7 @@ from pcgen.baselines.clm import utils
 from pcgen.baselines.clm import scaling
 from pcgen.baselines.clm import scoring
 from pcgen.utils import slice_dict
-from pcgen.data.remove_dupl import remove_dupl
+from pcgen.scripts.remove_dupl import remove_dupl
 from pcgen.utils import store_results
 from multiprocessing import Pool
 import psutil
@@ -113,6 +113,14 @@ def create_clm_pipeline(data, split_ratio, delta_1, delta_2, use_lambda_1=True, 
         out["first_adms"] = np.array(check_counts)
     return out
 
+def generate_clm(data, clm_pipeline, score):
+    set_score_fn = SCORES_TABLE[score]
+    item_scores = np.stack([instance["scores"] for instance in data])
+    similarity_scores = np.stack([instance["similarities"] for instance in data])
+    item_labels = np.stack([instance["labels"] for instance in data])
+    out = compute_values(config=clm_pipeline, item_scores=item_scores, similarity_scores=similarity_scores, 
+                         item_labels=item_labels, set_score_fn=set_score_fn, return_indices=True)
+    return out["kept_mask"]
 
 def test(test_data, best_valid_configs):
     test_item_scores = np.stack([instance["scores"] for instance in test_data])

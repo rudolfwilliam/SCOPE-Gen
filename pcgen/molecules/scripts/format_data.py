@@ -1,4 +1,4 @@
-from pcgen.data.format_data import labels_to_losses, format_data
+from pcgen.scripts.format_data import labels_to_losses, format_data
 from pcgen.molecules.paths import DATA_DIR
 
 def main(data_dir=DATA_DIR, output_dir="processed/data.pkl"):

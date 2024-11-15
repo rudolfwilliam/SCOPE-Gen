@@ -56,11 +56,20 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description="Run the evaluation module with given parameters")
     parser.add_argument('--config', type=str, default=os.path.join("CONFIG_DIR", "eval.json"), help='Path to configuration JSON file')
-    parser.add_argument('--name', type=str, default="scac-gen", help='name of the method')
+    parser.add_argument('--name', type=str, default="CLM", help='name of the method')
     parser.add_argument('--dir', type=str, default="processed", help='Directory for processing')
     parser.add_argument('--score', type=str, default="count", help='Score type')
-    parser.add_argument('--reduced_max', nargs='+', default=["generation", "quality", "remove_dupl"], help='List of stages to process')
+    parser.add_argument('--reduced_max', type=int, default=20, help='List of stages to process')
+
+    args = parser.parse_args()
 
     set_seed(0)
     cfg = load_config_from_json(os.path.join(CONFIG_DIR, "eval.json"))
-    eval(cfg, dir_="processed", name="clm", score="count", reduced_max=20)
+
+    eval(
+         cfg, 
+         dir_=args.dir, 
+         name=args.name, 
+         score=args.score, 
+         reduced_max=args.reduced_max
+         )
