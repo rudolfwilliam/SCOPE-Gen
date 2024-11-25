@@ -5,14 +5,14 @@ import numpy as np
 import pickle
 import matplotlib.pyplot as plt
 #import tikzplotlib
-from pcgen.scripts import DATA_DIRS
+from pcgen.scripts import EVAL_DIRS
 
 SIZES = [300, 600, 1200]
 SCORES = ['max', 'sum', 'count']
 DATASET_NAME = "MIMIC-CXR"  # Specify your dataset name
 
 def main(alpha):
-    data_dir = DATA_DIRS[DATASET_NAME]
+    data_dir = EVAL_DIRS[DATASET_NAME]
     alpha_str = str(alpha).replace(".", "")
     
     bin_edges = np.arange(0.55, 1.05, 0.03)  # Adjusted upper limit to include 1.0

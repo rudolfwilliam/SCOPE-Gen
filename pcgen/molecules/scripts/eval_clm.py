@@ -13,7 +13,7 @@ USE_LAMBDA_2 = True # quality
 ALT_LAMBDA_1 = 0.5
 ALT_LAMBDA_2 = -np.inf
 
-DEBUG = True
+DEBUG = False
 VERBOSE = True
 
 def eval(cfg, dir_, name="clm", score="count", reduced_max=40):

@@ -10,7 +10,7 @@ import os
 DEBUG = False
 VERBOSE = True
 
-def eval(cfg, name, score, stages, dir_="processed"):
+def eval(cfg, name, score, stages, dir_="processed", custom_path=None, return_std_coverages=False):
     data_dir = os.path.join(DATA_DIR, dir_)
     data_path = os.path.join(data_dir, "data.pkl")
     
@@ -41,7 +41,9 @@ def eval(cfg, name, score, stages, dir_="processed"):
             "verbose": VERBOSE,
             "debug": DEBUG,
             "stages": stages,
-            "name": name
+            "name": name,
+            "custom_path": custom_path,
+            "return_std_coverages": return_std_coverages
         }
         
         run_experiment(**experiment_config)
@@ -54,8 +56,19 @@ if __name__ == '__main__':
     parser.add_argument('--name', type=str, default="scac-gen", help='name of the method')
     parser.add_argument('--dir', type=str, default="processed", help='Directory for processing')
     parser.add_argument('--score', type=str, default="count", help='Score type')
+    parser.add_argument('--custom_path', type=str, default=None, help='Custom path to storing the result')
+    parser.add_argument('--return_std_coverages', type=bool, default=False, help='Return standard deviations of coverages')
     parser.add_argument('--stages', nargs='+', default=["generation", "quality", "remove_dupl"], help='List of stages to process')
-
+    args = parser.parse_args()
+    
     set_seed(0)
-    cfg = load_config_from_json(os.path.join(CONFIG_DIR, "eval.json"))    
-    eval(cfg, dir_="processed", name="scac-gen", score="count", stages=["generation", "quality", "remove_dupl"])
+    cfg = load_config_from_json(args.config)  # Use args.config instead of hardcoded path
+    eval(
+        cfg,
+        dir_=args.dir,
+        name=args.name,
+        score=args.score,
+        stages=args.stages,
+        return_std_coverages=args.return_std_coverages,
+        custom_path=args.custom_path
+    )

@@ -29,10 +29,8 @@ ORDER_FUNC_DIST = distance_order_func
 # actually not required, but for the sake of consistency
 MULTIPROCESSING = False
 
-# split up admissibility levels into M parts
-M = 5
-
-def create_scorgen_pipeline(data, split_ratios, alphas, score, data_splitting=True, verbose=False, stages=None, count_adm=True, measure_time=False):
+def create_scorgen_pipeline(data, split_ratios, alphas, score, data_splitting=True, verbose=False, 
+                            stages=None, count_adm=True, measure_time=False, alpha_params=None):
     # Split the dataset into calibration for generation, calibration for quality pruning, and data for diversity pruning
     if stages is None:
         from pcgen.data.meta_data import STAGES
@@ -104,7 +102,7 @@ def _initialize_score_computer(stage, pipeline, score_func, adjust_for_dupl):
 
     return score_computer
 
-def test(data, pipeline):
+def test(data, pipeline, return_std_coverages=False):
     """Test the pipeline."""
     pipeline.data = data
     coverages = []
@@ -118,10 +116,12 @@ def test(data, pipeline):
         else:
             coverages.append(int(any(prediction_set["labels"] == 1)))
             sizes.append(len(prediction_set["labels"]))
+    if return_std_coverages:
+        return np.mean(coverages), np.mean(sizes), np.std(coverages)  
     return np.mean(coverages), np.mean(sizes)
 
 def experiment_iteration(args):
-    data, data_set_size, n_coverage, split_ratios, alphas, score, stages, verbose, idx = args
+    data, data_set_size, n_coverage, split_ratios, alphas, score, stages, verbose, idx, return_std_coverages = args
     MEASURE_TIME = [False, True]
     COUNT_ADMS = [True, False]
 
@@ -129,7 +129,8 @@ def experiment_iteration(args):
         "coverages": [],
         "sizes": [],
         "times": [],
-        "first_adms": []
+        "first_adms": [],
+        "std_coverages": []
     }
 
     idxs = np.random.permutation(len(data))
@@ -141,7 +142,12 @@ def experiment_iteration(args):
         out = create_scorgen_pipeline(data=data_cal, split_ratios=split_ratios, alphas=alphas,
                                       score=score, data_splitting=True, verbose=verbose,
                                       stages=stages, count_adm=COUNT_ADMS[j], measure_time=MEASURE_TIME[j])
-        coverage, size = test([data[idx] for idx in test_idxs], out["pipeline"])
+        if return_std_coverages:
+            coverage, size, std_coverage = test([data[idx] for idx in test_idxs], out["pipeline"], 
+                                                return_std_coverages=return_std_coverages)
+            results["std_coverages"].append(std_coverage)
+        else:
+            coverage, size = test([data[idx] for idx in test_idxs], out["pipeline"])
 
         if COUNT_ADMS[j]:
             results["first_adms"].append(np.mean(out["first_adms"]))
@@ -152,12 +158,19 @@ def experiment_iteration(args):
     
     return results
 
-def run_experiment(data, data_dir, data_set_size, n_iterations, n_coverage, split_ratios, alpha, score, stages, name, verbose=False, debug=False):
+def run_experiment(data, data_dir, data_set_size, n_iterations, n_coverage, split_ratios, alpha, score, stages, name, 
+                   verbose=False, debug=False, custom_path=None, alpha_params=None, return_std_coverages=False):
+    
     K = len(split_ratios)
 
-    alphas = compute_alphas(alpha, K, M)
+    if alpha_params is None:
+        alpha_params = {"M" : 5, "parts" : [5 - (K - 1)] + [1 for _ in range(K-1)]}
+    
+    assert len(alpha_params["parts"]) == K
+    
+    alphas = compute_alphas(alpha, alpha_params)
 
-    args = [(data, data_set_size, n_coverage, split_ratios, alphas, score, stages, verbose, i) for i in range(n_iterations)]
+    args = [(data, data_set_size, n_coverage, split_ratios, alphas, score, stages, verbose, i, return_std_coverages) for i in range(n_iterations)]
     
     num_processes = psutil.cpu_count(logical=False) if MULTIPROCESSING else 1
     with multiprocessing.Pool(processes=num_processes) as pool:
@@ -168,7 +181,8 @@ def run_experiment(data, data_dir, data_set_size, n_iterations, n_coverage, spli
         "coverages": [],
         "sizes": [],
         "times": [],
-        "first_adms": []
+        "first_adms": [],
+        "std_coverages": []
     }
 
     for result in results:
@@ -176,19 +190,31 @@ def run_experiment(data, data_dir, data_set_size, n_iterations, n_coverage, spli
         aggregate_results["sizes"].extend(result["sizes"])
         aggregate_results["times"].extend(result["times"])
         aggregate_results["first_adms"].extend(result["first_adms"])
+        if return_std_coverages:
+            aggregate_results["std_coverages"].extend(result["std_coverages"])
 
     # Store results to disk unless debugging
+    type = custom_path if custom_path else None
     if not debug:
-        store_results(data_dir, name, alpha, score, aggregate_results["coverages"], aggregate_results["sizes"], aggregate_results["first_adms"], aggregate_results["times"], data_set_size)
+        store_results(data_dir, name, alpha, score, aggregate_results["coverages"], aggregate_results["sizes"], 
+                      aggregate_results["first_adms"], aggregate_results["times"], data_set_size, 
+                      type=type, std_coverages=aggregate_results["std_coverages"])
 
     if verbose:
         print(f"Mean coverage: {np.mean(aggregate_results['coverages']):.2f}")
 
-def compute_alphas(alpha, K, M):
-    if K > 1:
-        # alphas schedule
-        alphas = [1 - (1 - alpha)**(1/M)]*M
-        alphas = [1 - reduce(operator.mul, [(1 - alphas[i]) for i in range(M-1)])] + [1 - (1 - alphas[-1])**(1/(K-1))]*(K-1)
+"""def compute_custom_alphas(alpha, K, M, parts):
+    # alphas schedule
+    alphas = [1 - (1 - alpha)**(1/M)]*M
+    alphas = [1 - reduce(operator.mul, [(1 - alphas[i]) for i in range(M-1)])] + [1 - (1 - alphas[-1])**(1/(K-1))]*(K-1)
+    alphas = [1 - (1 - alphas[i])**(1/parts) for i in range(K)]
+    return alphas"""
+
+def compute_alphas(alpha, alpha_params):
+    if len(alpha_params["parts"]) > 1:
+        assert alpha_params["M"] == sum(alpha_params["parts"])
+        chunk = (1 - alpha)**(1/alpha_params["M"])
+        alphas = [(1 - chunk**alpha_params["parts"][j]) for j in range(len(alpha_params["parts"]))]
     else:
         alphas = [alpha]
     return alphas

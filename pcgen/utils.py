@@ -45,15 +45,15 @@ def order_dict(d, idxs):
     return {key: value[idxs] if len(value.shape) == 1 else value[np.ix_(idxs, idxs)]
             for key, value in d.items()}
 
-def store_results(data_dir, name, alpha, score, coverages, sizes, first_adms, times, data_set_size):
+def store_results(data_dir, name, alpha, score, coverages, sizes, first_adms, times, data_set_size, type="eval_results", std_coverages=None):
     import os
     import pickle
     alpha_str = str(alpha).replace(".", "")
-    path = os.path.join(data_dir, 'eval_results', name)
+    path = os.path.join(data_dir, type, name)
     if not os.path.exists(path):
         os.makedirs(path)
     with open(os.path.join(path, f"{score}_{data_set_size}_{alpha_str}.pkl"), 'wb') as file:
-        pickle.dump({"coverages" : coverages, "sizes" : sizes, "adm_counts" : first_adms, "times" : times}, file)
+        pickle.dump({"coverages" : coverages, "sizes" : sizes, "adm_counts" : first_adms, "times" : times, "std_coverages" : std_coverages}, file)
 
 def tikzplotlib_fix_ncols(obj):
     """

@@ -82,6 +82,18 @@ jupyter notebook pcgen/mimic_cxr/scripts/qualitative_comparison.ipynb
 
 If you want to reproduce the other experiments, simply replace `mimic_cxr` by any of the other project directories `cnn_dm`, `triviaqa` or `molecules`. The folder structures are identical.
 
+If you would like to reproduce the table in Appendix H, run
+
+```bash
+python -m pcgen.mimic_cxr.scripts.eval --custom_path "single_run_results" --config "./pcgen/mimic_cxr/scripts/configs/single_runs.json" --name "ourmethod{}" --return_std_coverages True --score "sum"
+```
+
+and finally,
+
+```bash
+python -m pcgen.mimic_cxr.scripts.single_runs_assessment
+```
+
 ## Natural Language Generation Tasks
 
 To generate the numpy files for the tasks `mimic_cxr`, `cnn_dm` and `triviaqa`, follow the instructions of the [CLM auxiliary repository](https://github.com/Varal7/clm_aux).

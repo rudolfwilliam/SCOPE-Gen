@@ -1,5 +1,5 @@
 {
-    "n_iterations" : 300,
+    "n_iterations" : 1,
     "data_set_sizes" : [300, 600, 1200],
     "alpha_grid" : [0.3, 0.35, 0.4],
     "n_coverage" : 300

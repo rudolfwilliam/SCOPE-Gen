@@ -8,7 +8,7 @@ import psutil
 
 VERBOSE = True
 CLM_ONLY = False
-SCACGEN_ONLY = False
+SCACGEN_ONLY = True
 
 def main(cfg, cfgs_scacgen, cfgs_clm, dir_):
     if VERBOSE:

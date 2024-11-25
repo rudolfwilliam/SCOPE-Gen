@@ -1,15 +1,16 @@
-from itertools import product
-from pcgen.utils import load_config_from_json, set_seed
-from pcgen.mimic_cxr.paths import CONFIG_DIR, DATA_DIR
-from pcgen.algorithms.base import run_experiment
 import argparse
 import pickle
 import os
+from itertools import product
+import json
+from pcgen.utils import load_config_from_json, set_seed
+from pcgen.mimic_cxr.paths import CONFIG_DIR, DATA_DIR
+from pcgen.algorithms.base import run_experiment
 
 DEBUG = False
 VERBOSE = True
 
-def eval(cfg, name, score, stages, dir_="processed"):
+def eval(cfg, name, score, stages, dir_="processed", custom_path=None, return_std_coverages=False, alpha_params=None):
     data_dir = os.path.join(DATA_DIR, dir_)
     data_path = os.path.join(data_dir, "data.pkl")
     
@@ -37,10 +38,13 @@ def eval(cfg, name, score, stages, dir_="processed"):
             "alpha": alpha,
             "score": score,
             "n_coverage": cfg["n_coverage"],
+            "alpha_params": alpha_params,
             "verbose": VERBOSE,
             "debug": DEBUG,
             "stages": stages,
-            "name": name
+            "name": name,
+            "return_std_coverages": return_std_coverages,
+            "custom_path": custom_path
         }
         
         run_experiment(**experiment_config)
@@ -53,6 +57,12 @@ if __name__ == '__main__':
     parser.add_argument('--name', type=str, default="ourmethod{}", help='Name of the method')
     parser.add_argument('--dir', type=str, default="processed", help='Directory for processing')
     parser.add_argument('--score', type=str, default="count", help='Score type')
+    parser.add_argument('--custom_path', type=str, default=None, help='Custom path to storing the result')
+    parser.add_argument('--return_std_coverages', type=bool, default=False, help='Return standard deviations of coverages')
+    def parse_alpha_params(s):
+        return json.loads(s)
+    parser.add_argument('--alpha_params', type=parse_alpha_params, default=None, help='Dictionary of alpha parameters M and parts. Parts is a list of \
+                        integers of length num_steps that must sum up to M.')
     parser.add_argument('--stages', nargs='+', default=["generation", "diversity", "quality"], help='List of stages to process')
     args = parser.parse_args()
 
@@ -63,5 +73,8 @@ if __name__ == '__main__':
         dir_=args.dir,
         name=args.name,
         score=args.score,
-        stages=args.stages
+        stages=args.stages,
+        return_std_coverages=args.return_std_coverages,
+        alpha_params=args.alpha_params,
+        custom_path=args.custom_path
     )

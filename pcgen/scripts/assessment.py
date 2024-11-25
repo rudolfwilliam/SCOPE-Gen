@@ -3,14 +3,14 @@
 import os
 import pickle
 import numpy as np
-from pcgen.scripts import DATA_DIRS
+from pcgen.scripts import EVAL_DIRS
 
 #EXCLUDED_METHODS = ['ourmethod{} gen. only', 'ourmethod{} flipped']
 EXCLUDED_METHODS = []
 
 def main(score, data_set_size, alpha):
     aggr_results = {}
-    for dataset_name, data_dir in DATA_DIRS.items():
+    for dataset_name, data_dir in EVAL_DIRS.items():
         results = {}
         for dir in os.listdir(data_dir):
             method_name = dir
@@ -65,7 +65,7 @@ def compute_mean_and_std(results):
     }
 
 def find_minimums(aggr_results):
-    min_values = {dataset: {metric: float('inf') for metric in ['\\# Queries', 'Time', 'Set Size', 'Frac. Reject']} for dataset in DATA_DIRS.keys()}
+    min_values = {dataset: {metric: float('inf') for metric in ['\\# Queries', 'Time', 'Set Size', 'Frac. Reject']} for dataset in EVAL_DIRS.keys()}
     for method_results in aggr_results.values():
         for dataset, dataset_results in method_results.items():
             for metric, value in dataset_results.items():
@@ -121,5 +121,5 @@ def generate_latex_table(aggr_results, min_values):
     return header + content + footer
 
 if __name__ == '__main__':
-    main(score='max', data_set_size=600, alpha=0.3)
+    main(score='max', data_set_size=600, alpha=0.4)
     
