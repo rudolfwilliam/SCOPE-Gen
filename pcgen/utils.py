@@ -49,6 +49,8 @@ def store_results(data_dir, name, alpha, score, coverages, sizes, first_adms, ti
     import os
     import pickle
     alpha_str = str(alpha).replace(".", "")
+    if type is None:
+        type = ""
     path = os.path.join(data_dir, type, name)
     if not os.path.exists(path):
         os.makedirs(path)
