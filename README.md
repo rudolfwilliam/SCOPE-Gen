@@ -3,7 +3,7 @@
 Official code for the ICLR 2025 paper *Conformal Generative Modeling With Improved Sample Efficiency Through Greedy Filters* by Klaus-Rudolf Kladny, Bernhard Schölkopf and Michael Muehlebach.
 
 <p align="center">
-<img src="/assets/SCOPE_GEN.svg" width="800">
+<img src="/assets/SCOPE_GEN.svg" width="700">
 </p>
 
 ## Code Organization
