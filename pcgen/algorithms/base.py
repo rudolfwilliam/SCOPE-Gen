@@ -203,13 +203,6 @@ def run_experiment(data, data_dir, data_set_size, n_iterations, n_coverage, spli
     if verbose:
         print(f"Mean coverage: {np.mean(aggregate_results['coverages']):.2f}")
 
-"""def compute_custom_alphas(alpha, K, M, parts):
-    # alphas schedule
-    alphas = [1 - (1 - alpha)**(1/M)]*M
-    alphas = [1 - reduce(operator.mul, [(1 - alphas[i]) for i in range(M-1)])] + [1 - (1 - alphas[-1])**(1/(K-1))]*(K-1)
-    alphas = [1 - (1 - alphas[i])**(1/parts) for i in range(K)]
-    return alphas"""
-
 def compute_alphas(alpha, alpha_params):
     if len(alpha_params["parts"]) > 1:
         assert alpha_params["M"] == sum(alpha_params["parts"])

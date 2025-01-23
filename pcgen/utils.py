@@ -45,12 +45,12 @@ def order_dict(d, idxs):
     return {key: value[idxs] if len(value.shape) == 1 else value[np.ix_(idxs, idxs)]
             for key, value in d.items()}
 
-def store_results(data_dir, name, alpha, score, coverages, sizes, first_adms, times, data_set_size, type="eval_results", std_coverages=None):
+def store_results(data_dir, name, alpha, score, coverages, sizes, first_adms, times, data_set_size, type=None, std_coverages=None):
     import os
     import pickle
     alpha_str = str(alpha).replace(".", "")
     if type is None:
-        type = ""
+        type = "eval_results"
     path = os.path.join(data_dir, type, name)
     if not os.path.exists(path):
         os.makedirs(path)

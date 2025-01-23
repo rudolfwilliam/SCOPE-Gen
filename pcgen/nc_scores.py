@@ -56,14 +56,15 @@ class MaxScore(object):
             return max(instance["scores"]) + self.gamma * len(instance["scores"])
         
 class MinScore(object):
-    def __init__(self):
+    def __init__(self, gamma=0.5):
+        self.gamma = gamma
         super(MinScore, self).__init__()
     
     def __call__(self, instance, apply_seq=False):
         if apply_seq:
-            return np.array([-min(instance["scores"][:(i + 1)]) for i in range(0, len(instance["scores"]))])
+            return np.array([-min(instance["scores"][:(i + 1)]) + self.gamma*(i + 1) for i in range(0, len(instance["scores"]))])
         else:
-            return -min(instance["scores"])
+            return -min(instance["scores"]) + self.gamma * len(instance["scores"])
 
 class NegSumScore(object):
     def __init__(self):
@@ -76,7 +77,8 @@ class NegSumScore(object):
             return -sum(instance["scores"])
 
 class DistanceScore(object):
-    def __init__(self):
+    def __init__(self, gamma=0.1):
+        self.gamma = gamma
         super(DistanceScore, self).__init__()
     
     def __call__(self, instance, apply_seq=False):
@@ -87,7 +89,7 @@ class DistanceScore(object):
                 # fill diagonal with 0
                 temp = np.copy(instance["similarities"])
                 np.fill_diagonal(temp, 0)
-                return np.max(temp)
+                return np.max(temp) + self.gamma * len(instance["similarities"])
             else:
                 return -1.
         

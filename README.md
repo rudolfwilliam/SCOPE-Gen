@@ -1,6 +1,6 @@
 # Sequential Conformal Admissibility Control for Generative Models (SCOPE-Gen)
 
-Repository for the manuscript *Conformal Generative Modeling With Improved Sample Efficiency Through Greedy Filters* (under review).
+Official code for the ICLR 2025 paper *Conformal Generative Modeling With Improved Sample Efficiency Through Greedy Filters* by Klaus-Rudolf Kladny, Bernhard Schölkopf and Michael Muehlebach.
 
 <p align="center">
 <img src="/assets/SCOPE_GEN.svg" width="500">
@@ -146,3 +146,7 @@ python -m pcgen.molecules.scripts.generate_data
 ```
 
 Then, you should find the three numpy arrays in the outputs directory.
+
+### Issues?
+
+If you encounter any issues in running the code, please contact me at *kkladny [at] tuebingen [dot] mpg [dot] de*.
