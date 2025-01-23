@@ -100,10 +100,10 @@ To generate the numpy files for the tasks `mimic_cxr`, `cnn_dm` and `triviaqa`, 
 
 ## Molecular Scaffold Extension
 
-Install the conda environment (assuming you would like to call it `scorgen_mol`):
+Install the conda environment (assuming you would like to call it `scope_gen_mol`):
 
 ```bash
-conda env create -n scorgen_mol -f scorgen/molecular_extensions/environment.yml
+conda env create -n scope_gen_mol -f scope_gen/molecular_extensions/environment.yml
 ```
 
 ### Install DiGress
