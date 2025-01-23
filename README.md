@@ -1,6 +1,6 @@
 # Sequential Conformal Admissibility Control for Generative Models (SCOPE-Gen)
 
-Official code for the ICLR 2025 paper *Conformal Generative Modeling With Improved Sample Efficiency Through Greedy Filters* by Klaus-Rudolf Kladny, Bernhard Schölkopf and Michael Muehlebach.
+Official code for the ICLR 2025 paper *Conformal Generative Modeling With Improved Sample Efficiency Through Sequential Greedy Filtering* by Klaus-Rudolf Kladny, Bernhard Schölkopf and Michael Muehlebach.
 
 <p align="center">
 <img src="/assets/SCOPE_GEN.svg" width="700">
