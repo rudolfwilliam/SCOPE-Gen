@@ -1,7 +1,7 @@
 from itertools import product
 from scope_gen.utils import load_config_from_json, set_seed
 from scope_gen.toy_example.paths import CONFIG_DIR, CKPT_DIR, DATA_DIR
-from scope_gen.algorithms.base import create_scorgen_pipeline, test
+from scope_gen.algorithms.base import create_scope_gen_pipeline, test
 from scope_gen.toy_example.scripts.assess import assess_method
 from scope_gen.nc_scores import SumScore
 from scope_gen.toy_example.distances import L2Distance
@@ -26,12 +26,12 @@ def main(cfg):
                                                       score_func=score_func, split_ratios=[1/3]*3)
         # store results to disk using pickle
         if not DEBUG:
-            with open(DATA_DIR + f'/eval_results_scorgen/results_{cfg["min_prob_threshold"]}_{data_set_size}_{alpha}.pkl', 'wb') as file:
+            with open(DATA_DIR + f'/eval_results_scope_gen/results_{cfg["min_prob_threshold"]}_{data_set_size}_{alpha}.pkl', 'wb') as file:
                 pickle.dump((coverages, sizes, first_adms), file)
 
 
 def run_experiment(data_set_size, gen_model, epsilon, distance_func, n_iterations, n_coverage, split_ratios, alpha, score_func, k_max=20):
-    coverages, sizes, first_adms = assess_method(n_iterations=n_iterations, n_coverage=n_coverage, gen_model=gen_model, method_func=create_scorgen_pipeline, test_func=test, 
+    coverages, sizes, first_adms = assess_method(n_iterations=n_iterations, n_coverage=n_coverage, gen_model=gen_model, method_func=create_scope_gen_pipeline, test_func=test, 
                                                  data_set_size=data_set_size, epsilon=epsilon, distance_func=distance_func, k_max=k_max, split_ratios=split_ratios, 
                                                  alphas=[1 - (1 - alpha)**(1/3)]*3, first_adm_only=False, score_func=score_func, data_splitting=True, verbose=VERBOSE)
     if VERBOSE:

@@ -1,1 +1,1 @@
-from scope_gen.algorithms.base import create_scorgen_pipeline
+from scope_gen.algorithms.base import create_scope_gen_pipeline

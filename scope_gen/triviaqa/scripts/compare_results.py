@@ -5,7 +5,7 @@ import numpy as np
 
 
 def main(score, data_set_size, alpha):
-    file_name = DATA_DIR + f'/eval_results_scorgen/results_{score}_{data_set_size}_{alpha}.pkl'
+    file_name = DATA_DIR + f'/eval_results_scope_gen/results_{score}_{data_set_size}_{alpha}.pkl'
     with open(file_name, 'rb') as file:
         coverages, sizes, first_adms = pickle.load(file)
         coverages = np.array(coverages)

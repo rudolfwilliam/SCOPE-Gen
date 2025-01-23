@@ -53,7 +53,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description="Run the evaluation module with given parameters")
     parser.add_argument('--config', type=str, default=os.path.join("CONFIG_DIR", "eval.json"), help='Path to configuration JSON file')
-    parser.add_argument('--name', type=str, default="scac-gen", help='name of the method')
+    parser.add_argument('--name', type=str, default="scope-gen", help='name of the method')
     parser.add_argument('--dir', type=str, default="processed", help='Directory for processing')
     parser.add_argument('--score', type=str, default="count", help='Score type')
     parser.add_argument('--custom_path', type=str, default=None, help='Custom path to storing the result')

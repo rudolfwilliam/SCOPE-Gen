@@ -5,7 +5,7 @@ import numpy as np
 
 
 def main(min_prob_threshold, data_set_size, alpha):
-    file_name = DATA_DIR + f'/eval_results_scorgen/results_{min_prob_threshold}_{data_set_size}_{alpha}.pkl'
+    file_name = DATA_DIR + f'/eval_results_scope_gen/results_{min_prob_threshold}_{data_set_size}_{alpha}.pkl'
     with open(file_name, 'rb') as file:
         coverages, sizes, first_adms = pickle.load(file)
         coverages = np.array(coverages)

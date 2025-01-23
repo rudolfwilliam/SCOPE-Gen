@@ -1,4 +1,4 @@
-"""This script contains the main functions for the SCAC-Gen algorithm."""
+"""This script contains the main functions for the SCOPE-Gen algorithm."""
 
 from scope_gen.data.base import split_data_idxs
 from scope_gen.calibrate.base import get_percentile
@@ -29,7 +29,7 @@ ORDER_FUNC_DIST = distance_order_func
 # actually not required, but for the sake of consistency
 MULTIPROCESSING = False
 
-def create_scorgen_pipeline(data, split_ratios, alphas, score, data_splitting=True, verbose=False, 
+def create_scope_gen_pipeline(data, split_ratios, alphas, score, data_splitting=True, verbose=False, 
                             stages=None, count_adm=True, measure_time=False, alpha_params=None):
     # Split the dataset into calibration for generation, calibration for quality pruning, and data for diversity pruning
     if stages is None:
@@ -139,7 +139,7 @@ def experiment_iteration(args):
     data_cal = [data[idx] for idx in cal_idxs]
 
     for j in range(2):  # Two runs per iteration
-        out = create_scorgen_pipeline(data=data_cal, split_ratios=split_ratios, alphas=alphas,
+        out = create_scope_gen_pipeline(data=data_cal, split_ratios=split_ratios, alphas=alphas,
                                       score=score, data_splitting=True, verbose=verbose,
                                       stages=stages, count_adm=COUNT_ADMS[j], measure_time=MEASURE_TIME[j])
         if return_std_coverages:

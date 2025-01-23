@@ -1,4 +1,4 @@
-"""This scripts creates histograms that show how admissibility for CLM and SCAC-Gen compare, as sample size increases."""
+"""This scripts creates histograms that show how admissibility for CLM and SCOPE-Gen compare, as sample size increases."""
 
 import os
 import numpy as np
@@ -29,18 +29,18 @@ def main(alpha):
         axes = np.expand_dims(axes, axis=1)
     
     for score_idx, score in enumerate(SCORES):
-        coverages_scacgen = []
+        coverages_scope_gen = []
         coverages_clm = []
         
         # Load data for each size
         for size in SIZES:
-            # Load SCAC-Gen data
-            file_name_scacgen = os.path.join(data_dir, "ourmethod{}", f'{score}_{size}_{alpha_str}.pkl')
-            with open(file_name_scacgen, 'rb') as file:
+            # Load SCOPE-Gen data
+            file_name_scope_gen = os.path.join(data_dir, "ourmethod{}", f'{score}_{size}_{alpha_str}.pkl')
+            with open(file_name_scope_gen, 'rb') as file:
                 results = pickle.load(file)
                 # Replace NaN values with 1.0
                 coverage = np.nan_to_num(np.array(results['coverages']), nan=1.0)
-                coverages_scacgen.append(coverage)
+                coverages_scope_gen.append(coverage)
             # Load CLM data
             file_name_clm = os.path.join(data_dir, "CLM", f'{score}_{size}_{alpha_str}.pkl')
             with open(file_name_clm, 'rb') as file:
@@ -53,9 +53,9 @@ def main(alpha):
         for size_idx, size in enumerate(SIZES):
             ax = axes[score_idx, size_idx]
             # Histogram for coverages
-            n_scacgen, bins_scacgen, patches_scacgen = ax.hist(
-                coverages_scacgen[size_idx], bins=bin_edges, alpha=0.7, density=True,
-                label='SCAC-Gen'
+            n_scope_gen, bins_scope_gen, patches_scope_gen = ax.hist(
+                coverages_scope_gen[size_idx], bins=bin_edges, alpha=0.7, density=True,
+                label='SCOPE-Gen'
             )
             n_clm, bins_clm, patches_clm = ax.hist(
                 coverages_clm[size_idx], bins=bin_edges, alpha=0.7, density=True,
@@ -64,11 +64,11 @@ def main(alpha):
             ax.axvline(1 - alpha, color='red', linestyle='--', linewidth=2, label='$1 - \\alpha$')
             
             # Calculate means
-            mean_scacgen = np.mean(coverages_scacgen[size_idx])
+            mean_scope_gen = np.mean(coverages_scope_gen[size_idx])
             mean_clm = np.mean(coverages_clm[size_idx])
             
             # Plot vertical dashed lines for means
-            ax.axvline(mean_scacgen, linestyle='dashed', linewidth=2, label='SCAC-Gen Mean')
+            ax.axvline(mean_scope_gen, linestyle='dashed', linewidth=2, label='SCOPE-Gen Mean')
             ax.axvline(mean_clm, color="orange", linestyle='dashed', linewidth=2, label='CLM Mean')
             
             # Set labels and titles
