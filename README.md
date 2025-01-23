@@ -3,14 +3,14 @@
 Official code for the ICLR 2025 paper *Conformal Generative Modeling With Improved Sample Efficiency Through Greedy Filters* by Klaus-Rudolf Kladny, Bernhard Schölkopf and Michael Muehlebach.
 
 <p align="center">
-<img src="/assets/SCOPE_GEN.svg" width="500">
+<img src="/assets/SCOPE_GEN.svg" width="800">
 </p>
 
 ## Code Organization
 
 ```
 .
-├── pcgen
+├── scope_gen
 │     ├── algorithms
 │     │     └── base.py          # the "heart" of the algorithm: Prediction pipeline generation
 │     ├── models                 # prediction pipeline classes
@@ -59,25 +59,25 @@ The `scores.npy` array contains the quality estimates for each sample. The `labe
 If you want to run the MIMIC-CXR experiment, these files must be moved into
 
 ```bash
-pcgen/mimic_cxr/data/outputs
+scope_gen/mimic_cxr/data/outputs
 ```
 
 After specifying these arrays, you are ready to get started! First, you must format the data. For instance, if you want to reproduce our MIMIC-CXR results, run
 
 ```bash
-python -m pcgen.mimic_cxr.scripts.format_data
+python -m scope_gen.mimic_cxr.scripts.format_data
 ```
 
 Then, you can reproduce our quantitative evaluation results (including all baselines) via
 
 ```bash
-python -m pcgen.mimic_cxr.scripts.eval_all
+python -m scope_gen.mimic_cxr.scripts.eval_all
 ```
 
 For the qualitative evaluation results, run the jupyter notebook
 
 ```bash
-jupyter notebook pcgen/mimic_cxr/scripts/qualitative_comparison.ipynb
+jupyter notebook scope_gen/mimic_cxr/scripts/qualitative_comparison.ipynb
 ```
 
 If you want to reproduce the other experiments, simply replace `mimic_cxr` by any of the other project directories `cnn_dm`, `triviaqa` or `molecules`. The folder structures are identical.
@@ -85,13 +85,13 @@ If you want to reproduce the other experiments, simply replace `mimic_cxr` by an
 If you would like to reproduce the table in Appendix H, run
 
 ```bash
-python -m pcgen.mimic_cxr.scripts.eval --custom_path "single_run_results" --config "./pcgen/mimic_cxr/scripts/configs/single_runs.json" --name "ourmethod{}" --return_std_coverages True --score "sum"
+python -m scope_gen.mimic_cxr.scripts.eval --custom_path "single_run_results" --config "./scope_gen/mimic_cxr/scripts/configs/single_runs.json" --name "ourmethod{}" --return_std_coverages True --score "sum"
 ```
 
 and finally,
 
 ```bash
-python -m pcgen.mimic_cxr.scripts.single_runs_assessment
+python -m scope_gen.mimic_cxr.scripts.single_runs_assessment
 ```
 
 ## Natural Language Generation Tasks
@@ -134,7 +134,7 @@ and also install this one in the same way as for `DiGress`.
 Either obtain model weights by training a DiGress model on the MOSES data train split or simply download the MOSES model checkpoint from the [original repository](https://github.com/cvignac/DiGress). Place the model `.ckpt` file into
 
 ```bash
-pcgen/molecules/models/checkpoints
+scope_gen/molecules/models/checkpoints
 ```
 
 ### Generate Data
@@ -142,7 +142,7 @@ pcgen/molecules/models/checkpoints
 Finally, generate the model predictions via
 
 ```bash
-python -m pcgen.molecules.scripts.generate_data
+python -m scope_gen.molecules.scripts.generate_data
 ```
 
 Then, you should find the three numpy arrays in the outputs directory.

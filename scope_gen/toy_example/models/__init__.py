@@ -1,0 +1,1 @@
+from scope_gen.toy_example.models.gaussian_mixture import GaussianMixtureModel
