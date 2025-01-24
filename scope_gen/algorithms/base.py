@@ -157,9 +157,14 @@ def experiment_iteration(args):
     data_cal = [data[idx] for idx in cal_idxs]
 
     for j in range(2):  # Two runs per iteration
-        out = create_scope_gen_pipeline(data=data_cal, split_ratios=split_ratios, alphas=alphas,
-                                      score=score, data_splitting=True, verbose=verbose,
-                                      stages=stages, count_adm=COUNT_ADMS[j], measure_time=MEASURE_TIME[j])
+        out = create_scope_gen_pipeline(data=data_cal, 
+                                        split_ratios=split_ratios, 
+                                        alphas=alphas,
+                                        score=score, 
+                                        data_splitting=True, 
+                                        stages=stages, 
+                                        count_adm=COUNT_ADMS[j], 
+                                        measure_time=MEASURE_TIME[j])
         if return_std_coverages:
             coverage, size, std_coverage = test([data[idx] for idx in test_idxs], out["pipeline"], 
                                                 return_std_coverages=return_std_coverages)

@@ -1,6 +1,6 @@
 """Script that evaluates all baselines at once."""
 
-from scope_gen.mimic_cxr.paths import CONFIG_DIR
+from scope_gen.mimic_cxr.paths import CONFIG_DIR, DATA_DIR
 from scope_gen.utils import load_config_from_json, load_configs_from_jsonl, set_seed
 from scope_gen.scripts.eval import eval_all
 
@@ -22,5 +22,6 @@ if __name__ == "__main__":
              dir_="processed",
              verbose=VERBOSE,
              clm_only=CLM_ONLY,
+             data_dir=DATA_DIR,
              scope_gen_only=SCOPE_GEN_ONLY
             )
