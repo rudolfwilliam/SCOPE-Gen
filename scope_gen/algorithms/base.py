@@ -44,6 +44,7 @@ def create_scope_gen_pipeline(data,
                               stages=None, 
                               count_adm=True, 
                               measure_time=False):
+    """Create a SCOPE-Gen pipeline."""
     # Split the dataset into calibration for generation, calibration for quality pruning, and data for diversity pruning
     if stages is None:
         from scope_gen.data.meta_data import STAGES
@@ -197,6 +198,9 @@ def run_experiment(data,
                    custom_path=None, 
                    alpha_params=None, 
                    return_std_coverages=False):
+    
+    """Fits the SCOPE-Gen pipeline to the data for many 
+    iterations and one evaluation per fit."""
     
     K = len(split_ratios)
 
