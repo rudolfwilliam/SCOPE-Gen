@@ -1,7 +1,30 @@
 import os
 import pickle
 from itertools import product
+import psutil
+
 from scope_gen.algorithms.base import run_experiment
+from scope_gen.baselines.clm.eval import eval_clm
+
+
+def eval_all(cfg, cfgs_scope_gen, cfgs_clm, dir_, verbose=True, clm_only=False, scope_gen_only=False):
+    if verbose:
+        print(f"Running evaluation for {len(cfgs_scope_gen)} SCOPE-Gen configurations and {len(cfgs_clm)} CLM configurations.")
+        print(f"Multiprocessing with {psutil.cpu_count(logical=False)} processes.")
+    if not clm_only:
+        for cfg_scope_gen in cfgs_scope_gen:
+            eval(cfg=cfg, dir_=dir_, **cfg_scope_gen)
+            if verbose:
+                print(f"Finished evaluation for SCOPE-Gen configuration {cfg_scope_gen}.")
+    else:
+        print("Skipping SCOPE-Gen evaluation.")
+    if not scope_gen_only:
+        for cfg_clm in cfgs_clm:
+            eval_clm(cfg, dir_, **cfg_clm)
+            if verbose:
+                print(f"Finished evaluation for CLM configuration {cfg_clm}.")
+    else:
+        print("Skipping CLM evaluation.")
 
 
 def eval(cfg, 
@@ -16,6 +39,7 @@ def eval(cfg,
          debug=False,
          verbose=True
          ):
+    # evaluation of SCOPE-Gen
     data_dir = os.path.join(data_dir, dir_)
     data_path = os.path.join(data_dir, "data.pkl")
     

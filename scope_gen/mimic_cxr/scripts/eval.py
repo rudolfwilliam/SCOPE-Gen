@@ -2,7 +2,7 @@ import argparse
 import os
 import json
 
-from scope_gen.scripts.base import eval
+from scope_gen.scripts.eval import eval
 from scope_gen.utils import load_config_from_json, set_seed
 from scope_gen.mimic_cxr.paths import CONFIG_DIR, DATA_DIR
 

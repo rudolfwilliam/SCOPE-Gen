@@ -2,9 +2,9 @@ import numpy as np
 import argparse
 import os
 
+from scope_gen.baselines.clm.eval import eval
 from scope_gen.utils import load_config_from_json, set_seed
 from scope_gen.cnn_dm.paths import CONFIG_DIR, DATA_DIR
-from scope_gen.cnn_dm.paths import DATA_DIR
 
 
 USE_LAMBDA_1 = True # similarity

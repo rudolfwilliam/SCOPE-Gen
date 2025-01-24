@@ -1,12 +1,11 @@
-from itertools import product
-from scope_gen.utils import load_config_from_json, set_seed
-from scope_gen.triviaqa.paths import CONFIG_DIR, DATA_DIR
-from scope_gen.triviaqa.paths import DATA_DIR
-from scope_gen.baselines.clm.uncertainty import run_experiment
-import pickle
 import numpy as np
 import argparse
 import os
+
+from scope_gen.utils import load_config_from_json, set_seed
+from scope_gen.triviaqa.paths import CONFIG_DIR, DATA_DIR
+from scope_gen.baselines.clm.eval import eval
+
 
 USE_LAMBDA_1 = False # similarity
 USE_LAMBDA_2 = True # quality
@@ -16,41 +15,6 @@ ALT_LAMBDA_2 = -np.inf
 DEBUG = False 
 VERBOSE = True
 
-def eval(cfg, dir_, name="clm", score="count", reduced_max=20):
-    data_dir = os.path.join(DATA_DIR, dir_)
-    data_path = os.path.join(data_dir, "data.pkl")
-
-    with open(data_path, 'rb') as file:
-        data = pickle.load(file)
-
-    parameter_combinations = list(product(cfg["data_set_sizes"], cfg["alpha_grid"]))
-
-    # run experiments
-    if VERBOSE:
-        print(f"Running {len(parameter_combinations)} experiments.")
-    for data_set_size, alpha in parameter_combinations:
-        if VERBOSE:
-            print(f"Running experiment with data set size {data_set_size} and alpha {alpha}.")
-
-        experiment = {
-            "data": data,
-            "data_dir": DATA_DIR,
-            "data_set_size": data_set_size,
-            "n_iterations": cfg["n_iterations"],
-            "n_coverage": cfg["n_coverage"],
-            "alpha": alpha,
-            "reduced_max": reduced_max,
-            "score": score,
-            "name": name,
-            "verbose": VERBOSE,
-            "debug": DEBUG,
-            "use_lambda_1": USE_LAMBDA_1,
-            "use_lambda_2": USE_LAMBDA_2,
-            "alt_lambda_1": ALT_LAMBDA_1,
-            "alt_lambda_2": ALT_LAMBDA_2
-        }
-
-        run_experiment(**experiment)
 
 if __name__ == '__main__':
 
@@ -69,6 +33,11 @@ if __name__ == '__main__':
          cfg, 
          dir_=args.dir, 
          name=args.name, 
-         score=args.score, 
-         reduced_max=args.reduced_max
+         score=args.score,
+         data_dir=DATA_DIR,
+         use_lambda_1=USE_LAMBDA_1,
+         use_lambda_2=USE_LAMBDA_2,
+         reduced_max=args.reduced_max,
+         verbose=VERBOSE,
+         debug=DEBUG
          )

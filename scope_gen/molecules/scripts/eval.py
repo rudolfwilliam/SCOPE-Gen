@@ -1,7 +1,7 @@
 import argparse
 import os
 
-from scope_gen.scripts.base import eval
+from scope_gen.scripts.eval import eval
 from scope_gen.utils import load_config_from_json, set_seed
 from scope_gen.molecules.paths import CONFIG_DIR, DATA_DIR
 
