@@ -1,18 +1,24 @@
 """This script contains the main functions for the SCOPE-Gen algorithm."""
 
+import time
+import multiprocessing
+import numpy as np
+import psutil
+
 from scope_gen.data.base import split_data_idxs
 from scope_gen.calibrate.base import get_percentile
 from scope_gen.order_funcs import quality_order_func, distance_order_func
-from scope_gen.models.pipelines import MinimalPredictionPipeline, GenerationPredictionPipeline, FilterPredictionPipeline, RemoveDuplicatesPredictionPipeline
+from scope_gen.models.pipelines import (MinimalPredictionPipeline, 
+                                        GenerationPredictionPipeline, 
+                                        FilterPredictionPipeline, 
+                                        RemoveDuplicatesPredictionPipeline)
 from scope_gen.calibrate.score_computation import ScoreComputer
-from scope_gen.nc_scores import MaxScore, MinScore, DistanceScore, CountScore, SumScore
+from scope_gen.nc_scores import (MaxScore, 
+                                 MinScore, 
+                                 DistanceScore, 
+                                 CountScore, 
+                                 SumScore)
 from scope_gen.utils import store_results
-from functools import reduce
-import operator
-import multiprocessing
-import time
-import numpy as np
-import psutil
 
 
 SCORES_TABLE = {
@@ -29,8 +35,15 @@ ORDER_FUNC_DIST = distance_order_func
 # actually not required, but for the sake of consistency
 MULTIPROCESSING = False
 
-def create_scope_gen_pipeline(data, split_ratios, alphas, score, data_splitting=True, verbose=False, 
-                            stages=None, count_adm=True, measure_time=False, alpha_params=None):
+
+def create_scope_gen_pipeline(data, 
+                              split_ratios, 
+                              alphas, 
+                              score, 
+                              data_splitting=True, 
+                              stages=None, 
+                              count_adm=True, 
+                              measure_time=False):
     # Split the dataset into calibration for generation, calibration for quality pruning, and data for diversity pruning
     if stages is None:
         from scope_gen.data.meta_data import STAGES
@@ -64,6 +77,7 @@ def create_scope_gen_pipeline(data, split_ratios, alphas, score, data_splitting=
         out["first_adms"] = np.stack(first_adms, axis=0).flatten()
     return out
 
+
 def _calibrate_pipeline(pipeline, stage, stages, score_func, adjust_for_dupl, count_adm, data_split_idxs, alphas):
     score_computer = _initialize_score_computer(stage, pipeline, score_func, adjust_for_dupl)
     first_adm = None
@@ -74,6 +88,7 @@ def _calibrate_pipeline(pipeline, stage, stages, score_func, adjust_for_dupl, co
     # Compute the conformal quantile for generation
     conformal_p = get_percentile(cal_scores, alphas[stages.index(stage)])
     return conformal_p, first_adm
+
 
 def _update_pipeline(pipeline, stage, score_func, conformal_p):
     if stage == "generation":
@@ -86,6 +101,7 @@ def _update_pipeline(pipeline, stage, score_func, conformal_p):
         elif stage == "remove_dupl":
             pipeline = RemoveDuplicatesPredictionPipeline(pipeline)
     return pipeline
+
 
 def _initialize_score_computer(stage, pipeline, score_func, adjust_for_dupl):
     if stage == "generation":
@@ -101,6 +117,7 @@ def _initialize_score_computer(stage, pipeline, score_func, adjust_for_dupl):
         raise ValueError(f"Stage {stage} not recognized.")
 
     return score_computer
+
 
 def test(data, pipeline, return_std_coverages=False):
     """Test the pipeline."""
@@ -119,6 +136,7 @@ def test(data, pipeline, return_std_coverages=False):
     if return_std_coverages:
         return np.mean(coverages), np.mean(sizes), np.std(coverages)  
     return np.mean(coverages), np.mean(sizes)
+
 
 def experiment_iteration(args):
     data, data_set_size, n_coverage, split_ratios, alphas, score, stages, verbose, idx, return_std_coverages = args
@@ -158,8 +176,22 @@ def experiment_iteration(args):
     
     return results
 
-def run_experiment(data, data_dir, data_set_size, n_iterations, n_coverage, split_ratios, alpha, score, stages, name, 
-                   verbose=False, debug=False, custom_path=None, alpha_params=None, return_std_coverages=False):
+
+def run_experiment(data, 
+                   data_dir, 
+                   data_set_size, 
+                   n_iterations, 
+                   n_coverage, 
+                   split_ratios, 
+                   alpha, 
+                   score, 
+                   stages, 
+                   name, 
+                   verbose=False, 
+                   debug=False, 
+                   custom_path=None, 
+                   alpha_params=None, 
+                   return_std_coverages=False):
     
     K = len(split_ratios)
 
@@ -202,6 +234,7 @@ def run_experiment(data, data_dir, data_set_size, n_iterations, n_coverage, spli
 
     if verbose:
         print(f"Mean coverage: {np.mean(aggregate_results['coverages']):.2f}")
+
 
 def compute_alphas(alpha, alpha_params):
     if len(alpha_params["parts"]) > 1:

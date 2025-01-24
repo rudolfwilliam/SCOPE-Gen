@@ -1,10 +1,11 @@
 """Script that evaluates all baselines at once."""
 
-from scope_gen.cnn_dm.scripts.eval_clm import eval as eval_clm
-from scope_gen.cnn_dm.scripts.eval import eval as eval_scope_gen
+import psutil
+
+from scope_gen.baselines.clm.base import eval as eval_clm
+from scope_gen.scripts.base import eval as eval_scope_gen
 from scope_gen.cnn_dm.paths import CONFIG_DIR
 from scope_gen.utils import load_config_from_json, load_configs_from_jsonl, set_seed
-import psutil
 
 VERBOSE = True
 CLM_ONLY = False
